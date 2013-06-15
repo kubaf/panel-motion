@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Walking Panels</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap -->
+    <link href="bootstrap/css/bootstrap.css" rel="stylesheet" media="screen">
+    <style>
+    body {
+      /*background-color: #eee;*/
+    }
+    /* Main marketing message and sign up button */
+    .jumbotron {
+      margin: 60px 0;
+      text-align: center;
+    }
+    .jumbotron h1 {
+      font-size: 100px;
+      line-height: 1;
+    }
+    .jumbotron .lead {
+      font-size: 24px;
+      line-height: 1.25;
+    }
+    .box_container {
+      margin-left: auto;
+      margin-right:auto;
+      width: 650px;
+    }
+    .box {
+      border: 1px solid #eee;
+      width: 300px;
+      height: 200px;
+      margin: 10px;
+      background-color: #fff;
+      
+      -moz-box-shadow: 0px 0px 15px #ccc;
+      -webkit-box-shadow: 0px 0px 15px #ccc;
+      box-shadow: 0px 0px 15px #ccc;
+    }
+    
+    .panel_background {
+      background-image:url('scarlet.png');
+      
+      /* Position in sprite */
+      background-position:0px 0px;
+      
+      /* Position in panel */
+      position: relative;
+      top: 65px;
+      left: 0px;
+      
+      width: 50px;   /* Width of sprite (static) */
+      height: 130px; /* Height of sprite (static) */
+      
+    }
+        
+    .panel1 {
+      float: left;
+    }
+    .panel2 {
+      float: right;
+    }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="jumbotron">
+        <h1>Panel Motion</h1>
+        <p class="lead">This is my implementation of Frank's "crazy" idea. <br> Mouse over the panels.</p>
+      </div>
+      <div class="row">
+        <div class="box_container">
+          <div class="box panel1">
+            <div class="panel_background"></div>
+          </div>
+          <div class="box panel2">
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="http://code.jquery.com/jquery.js"></script>
+    <script src="bootstrap/js/bootstrap.js"></script>
+  </body>
+  
+  <script>
+  
+  $(function() {
+
+    var RIGHT = 1;
+    var LEFT = -1;
+    var currX = 0;
+    var currDirection = RIGHT;
+    var leftOffset = $('.panel1').offset().left;
+    
+    $('.box').mousemove(function(e) {
+      currDirection = getDirection(e.pageX);
+      moveSprite(e.pageX);
+    })
+
+    function getDirection(x) {
+      var prevX = currX;
+      currX = x;
+      
+      if(prevX < currX) {
+        return RIGHT;
+      }
+      else {
+        return LEFT;
+      }
+    }
+    
+    var default_coordinates = {
+      'background-position-left': 0,
+      'background-position-top' : 0,
+      'from-left': 0  
+    }
+    
+    function getSpriteCoordinates(x) {
+      var coordx = x - leftOffset;
+      var whichSprite = Math.min(Math.floor(coordx/60), 9);
+      coordinates = default_coordinates;
+      coordinates['background-position-left'] = whichSprite*65;
+      coordinates['from-left'] = whichSprite*65;
+      if(currDirection==RIGHT) {
+        coordinates['background-position-top'] = 0;
+      }
+      else {
+        coordinates['background-position-top'] = 128;
+      }    
+      return coordinates;
+    }
+    
+
+    function moveSprite(x) {
+      var coordinates = getSpriteCoordinates(x);
+      
+      var bg_sprite_top = coordinates['background-position-top'];
+      var bg_sprite_left = coordinates['background-position-left']; 
+      var bgpos_css = '-'+bg_sprite_left+'px '+bg_sprite_top+'px';
+      var bgleft = coordinates['from-left'];
+      var bgleft_css = bgleft+'px';
+      
+      var bg = $(".panel_background");
+      bg.css('background-position', bgpos_css);
+      bg.css('left', bgleft_css);
+    };
+  });
+  </script>
+  
+</html>
